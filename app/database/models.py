@@ -49,7 +49,7 @@ class VPN(Base):
     price: Mapped[int] = mapped_column(Integer)
     max_conn: Mapped[int] = mapped_column(Integer)
     current_conn: Mapped[int] = mapped_column(Integer)
-    server_id: Mapped[str] = mapped_column(String(225))
+    server_ip: Mapped[str] = mapped_column(String(225))
     server_hash: Mapped[str] = mapped_column(String(225))
     category_id: Mapped[int] = mapped_column(ForeignKey('vpn_categories.id'))
     category: Mapped['VPNCategory'] = relationship(back_populates="vpns")
