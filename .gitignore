@@ -2,3 +2,4 @@
 .idea
 database.db
 config.py
+app/database/migrations/versions
