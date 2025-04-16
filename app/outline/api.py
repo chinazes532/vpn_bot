@@ -8,10 +8,13 @@ HEADERS = {
 }
 
 
-async def outline_request(method: str, endpoint: str, data: Any = None, OUTLINE_API_KEY: str = None):
+async def outline_request(method: str, endpoint: str, data: Any = None,
+                          OUTLINE_API_KEY: str = None, OUTLINE_API_CERT: str = None):
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
         url = f"{OUTLINE_API_KEY}{endpoint}"
+        print(url)
         async with session.request(method, url, headers=HEADERS, json=data) as response:
+            print(f"Response status: {response.status}")
             try:
                 return await response.json()
             except aiohttp.ContentTypeError:
@@ -19,6 +22,7 @@ async def outline_request(method: str, endpoint: str, data: Any = None, OUTLINE_
 
 
 async def create_access_key(url, cert):
+    print(f"Creating access key for URL: {url} with cert: {cert}")
     return await outline_request("POST", "/access-key", OUTLINE_API_KEY=url, OUTLINE_API_CERT=cert)
 
 
@@ -27,7 +31,9 @@ async def delete_access_key(key_id: str, url, cert):
 
 
 async def rename_access_key(key_id: str, name: str, url, cert):
-    data = {"name": name}
+    data = {
+        "name": name,
+    }
     return await outline_request("PUT", f"/access-key/{key_id}", data, OUTLINE_API_KEY=url, OUTLINE_API_CERT=cert)
 
 
