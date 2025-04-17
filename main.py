@@ -11,6 +11,7 @@ from config import BOT_TOKEN
 
 from app.handlers.user_message import user
 from app.handlers.admin_message import admin
+from app.handlers.back_message import back
 
 from app.database.models import create_db
 
@@ -29,6 +30,7 @@ async def main():
 
     dp.include_router(user)
     dp.include_router(admin)
+    dp.include_router(back)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

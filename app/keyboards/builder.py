@@ -13,6 +13,8 @@ async def user_vpn_categories():
     for category in categories:
         kb.row(InlineKeyboardButton(text=category.name, callback_data=f"category_{category.id}"))
 
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="user_back"))
+
     return kb.as_markup()
 
 
@@ -23,5 +25,16 @@ async def user_countries(vpn_category_id):
 
     for country in countries:
         kb.row(InlineKeyboardButton(text=country.name, callback_data=f"country_{country.id}"))
+
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="user_back"))
+
+    return kb.as_markup()
+
+
+async def ukassa_pay(url):
+    kb = InlineKeyboardBuilder()
+
+    kb.row(InlineKeyboardButton(text="Оплатить", url=url))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="user_back"))
 
     return kb.as_markup()

@@ -14,7 +14,8 @@ from app.filters.admin_filter import AdminProtect
 from app.database.requests.user.add import set_user
 from app.database.requests.vpns.select import get_vpn_by_id
 
-from app.outline.api import create_access_key, get_access_key_url
+from app.outline_vpn.outline_vpn import OutlineVPN
+from app.payments.ukassa import create_payment_one
 
 user = Router()
 
@@ -37,52 +38,37 @@ async def start_command(message: Message):
 
 Мы рады видеть вас здесь! 
 Если вы ищете надежный способ обеспечить свою онлайн-безопасность и конфиденциальность, вы попали по адресу.""",
-                             reply_markup=await bkb.user_vpn_categories())
+                             reply_markup=ikb.user_panel)
         await set_user(message.from_user.id, message.from_user.full_name, current_date)
     else:
         await message.answer(f"""🌐 <b>Добро пожаловать!</b> 🌐
 
 Мы рады видеть вас здесь! 
 Если вы ищете надежный способ обеспечить свою онлайн-безопасность и конфиденциальность, вы попали по адресу.""",
-                             reply_markup=await bkb.user_vpn_categories())
+                             reply_markup=ikb.user_panel)
         await set_user(message.from_user.id, message.from_user.full_name, current_date)
         await message.answer(f"Вы успешно авторизовались как администратор!",
                              reply_markup=rkb.admin_menu)
 
 
+@user.callback_query(F.data == "buy")
+async def buy(callback: CallbackQuery):
+    await callback.message.edit_text("<b>Выберите страну:</b>",
+                                     reply_markup=await bkb.user_vpn_categories())
+
+
 @user.callback_query(F.data.startswith("category_"))
 async def user_choose_category(callback: CallbackQuery):
-    await callback.answer("Выбор региона. . .")
-
     vpn_category_id = int(callback.data.split("_")[1])
 
-    await callback.message.edit_text("<b>Выберите регион:</b>",
+    await callback.message.edit_text("<b>Тариф:</b>",
                                      reply_markup=await bkb.user_countries(vpn_category_id))
 
 
 @user.callback_query(F.data.startswith("country_"))
-async def user_choose_country(callback: CallbackQuery):
+async def user_choose_country(callback: CallbackQuery, bot: Bot):
     vpn_id = int(callback.data.split("_")[1])
-    vpn = await get_vpn_by_id(vpn_id)
 
-    if vpn.max_conn <= vpn.current_conn:
-        await callback.answer("Мест на данный VPN больше нет!",
-                              show_alert=True)
-        return
-
-    await callback.message.edit_text(f"<b>{vpn.name}</b>\n"
-                                     f"Цена: {vpn.price} RUB в месяц\n")
-
-    vpn_data = await create_access_key(vpn.server_ip, vpn.server_hash)
-
-    if 'key' in vpn_data:
-        print(f"Создан ключ: {vpn_data['key']}")
-    else:
-        print(f"Ошибка при создании ключа: {vpn_data}")
+    await create_payment_one(callback, bot, vpn_id)
 
 
-@user.message(Command("get"))
-async def get(message: Message):
-    key = await get_access_key_url("1")
-
-    print(key)

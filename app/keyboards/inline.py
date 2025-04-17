@@ -8,6 +8,14 @@ admin_panel = InlineKeyboardMarkup(
     ]
 )
 
+user_panel = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Купить VPN", callback_data="buy")],
+        [InlineKeyboardButton(text="Профиль", callback_data="profile")],
+        [InlineKeyboardButton(text="Поддержка", url="https://t.me/psych0ce00")]
+    ]
+)
+
 check_sub = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Подписаться", url=CHANNEL_LINK)],
