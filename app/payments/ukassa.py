@@ -28,7 +28,7 @@ async def create_payment_one(callback: CallbackQuery, bot: Bot, vpn_id):
         },
         "confirmation": {
             "type": "redirect",
-            "return_url": "https://t.me/Natali_clubBot"
+            "return_url": "https://t.me/mypersonalvpn_robot"
         },
         "capture": True,
         "description": f"{vpn.name}",
